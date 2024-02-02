@@ -2,6 +2,7 @@ package task02;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Cart<T extends Food> {
@@ -37,5 +38,32 @@ public class Cart<T extends Food> {
     }
 
     public void cardBalancing() {
+        Optional<T> proteinFood =  foodstuffs.stream().filter(Food::getProteins).findFirst();
+        Optional<T> fatFood =  foodstuffs.stream().filter(Food::getFats).findFirst();
+        Optional<T> carbFood = foodstuffs.stream().filter(Food::getCarbohydrates).findFirst();
+
+        if (proteinFood.isPresent() && fatFood.isPresent() && carbFood.isPresent()) {
+            System.out.println("Корзина уже сбалансирована по БЖУ.");
+            return;
+        }
+
+        if (proteinFood.isEmpty()) {
+            proteinFood =  market.getThings(clazz).stream().filter(Food::getProteins).findFirst();
+            proteinFood.ifPresent(foodstuffs::add);
+        }
+        if (fatFood.isEmpty()) {
+            fatFood = market.getThings(clazz).stream().filter(Food::getFats).findFirst();
+            fatFood.ifPresent(foodstuffs::add);
+        }
+        if (carbFood.isEmpty()) {
+            carbFood = market.getThings(clazz).stream().filter(Food::getCarbohydrates).findFirst();
+            carbFood.ifPresent(foodstuffs::add);
+        }
+
+        if (proteinFood.isPresent() && fatFood.isPresent() && carbFood.isPresent()) {
+            System.out.println("Корзина сбалансирована по БЖУ.");
+        } else {
+            System.out.println("Невозможно сбалансировать корзину по БЖУ.");
+        }
     }
 }
